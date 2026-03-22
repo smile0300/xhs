@@ -27,24 +27,17 @@ async def generate_post(date_str: str):
     """
     # 1. Fetch Weather
     try:
-        # python 명령어가 환경에 따라 다를 수 있으므로 적절히 수정 필요
-        # 우선 'python'으로 시도
-        subprocess.run(["python", os.path.join(EXECUTION_DIR, "fetch_weather.py"), date_str], check=True)
+        python_exe = r"C:\Users\k9746\AppData\Local\Programs\Python\Python314\python.exe"
+        subprocess.run([python_exe, os.path.join(EXECUTION_DIR, "fetch_weather.py"), date_str], check=True)
     except Exception as e:
-        # 'python' 실패 시 'py' 등으로 재시도 로직 추가 가능
-        try:
-            subprocess.run(["py", os.path.join(EXECUTION_DIR, "fetch_weather.py"), date_str], check=True)
-        except:
-            raise HTTPException(status_code=500, detail=f"Weather fetch failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Weather fetch failed: {str(e)}")
 
     # 2. Generate Post
     try:
-        subprocess.run(["python", os.path.join(EXECUTION_DIR, "generate_post.py"), date_str], check=True)
+        subprocess.run([python_exe, os.path.join(EXECUTION_DIR, "generate_post.py"), date_str], check=True)
     except Exception as e:
-        try:
-            subprocess.run(["py", os.path.join(EXECUTION_DIR, "generate_post.py"), date_str], check=True)
-        except:
-            raise HTTPException(status_code=500, detail=f"Post generation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Post generation failed: {str(e)}")
+
 
     # 3. Read Result
     post_path = os.path.join(TMP_DIR, f"post_{date_str}.txt")
