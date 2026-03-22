@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeju Weather XHS Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+        <div class="glass-card">
+            <h1>XHS Weather Post</h1>
+            <p class="subtitle">제주도 날씨 데이터를 기반으로 감성적인 샤오홍슈 게시물을 생성합니다.</p>
+
+            <div class="input-group">
+                <label for="post-date">게시물 날짜 선택</label>
+                <input type="date" id="post-date">
+            </div>
+
+            <button id="generate-btn">게시물 생성하기 ✨</button>
+            <div id="loading" class="loading">Gemini가 게시물을 작성 중입니다...</div>
+
+            <div id="result-area">
+                <div class="result-header">
+                    <label>생성된 게시물</label>
+                    <button id="copy-btn" class="copy-btn">복사하기</button>
+                </div>
+                <pre id="post-content"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
