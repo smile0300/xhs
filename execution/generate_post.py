@@ -17,7 +17,9 @@ def generate_xhs_post(weather_data, target_date):
     # 날씨 데이터를 텍스트로 정리
     weather_summary = ""
     for region_id, data in weather_data.items():
-        weather_summary += f"- {data['name']}: 최저 {data['tmp_min']}°C, 최고 {data['tmp_max']}°C, 풍속 {data['wsd']}m/s\n"
+        summary = data['summary']
+        weather_summary += f"- {data['name']}: 최저 {summary['tmp_min']}°C, 최고 {summary['tmp_max']}°C, 풍속 {summary['wsd']}m/s\n"
+
 
     prompt = f"""
 당신은 샤오홍슈(Xiaohongshu)의 인기 여행 인플루언서입니다. 

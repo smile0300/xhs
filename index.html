@@ -24,9 +24,17 @@
             </div>
 
             <button id="generate-btn">게시물 생성하기 ✨</button>
-            <div id="loading" class="loading">Gemini가 게시물을 작성 중입니다...</div>
+            <div id="loading" class="loading">잠시만 기다려주세요...</div>
+
+            <div id="hourly-area">
+                <div class="section-title">🕒 시간대별 날씨 (제주시 기준)</div>
+                <div id="hourly-list" class="hourly-container">
+                    <!-- Hourly items will be injected here -->
+                </div>
+            </div>
 
             <div id="result-area">
+
                 <div class="result-header">
                     <label>생성된 게시물</label>
                     <button id="copy-btn" class="copy-btn">복사하기</button>

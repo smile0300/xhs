@@ -56,31 +56,53 @@ def fetch_weather(target_date, nx, ny):
 
 def process_weather_data(items, target_date):
     """
-    API 결과에서 필요한 정보(최저/최고기온, 강수확률 등) 추출
+    API 결과에서 필요한 정보 추출
+    - 요약 데이터 (최저/최고기온 등)
+    - 시간대별 데이터 (기온, 하늘상태, 강수확률 등)
     """
-    result = {
+    summary = {
         "tmp_min": None,
         "tmp_max": None,
-        "pop": 0, # 강수확률
-        "sky": 1, # 하늘상태 (1: 맑음, 3: 구름많음, 4: 흐림)
-        "wsd": 0 # 풍속
+        "pop": 0,
+        "sky": 1,
+        "wsd": 0
     }
+    hourly = []
     
+    # 시간대별 정리를 위해 딕셔너리 사용
+    hourly_map = {}
+
     for item in items:
-        # TMN: 일 최저기온, TMX: 일 최고기온
         if item['fcstDate'] == target_date:
-            if item['category'] == 'TMN':
-                result['tmp_min'] = float(item['fcstValue'])
-            elif item['category'] == 'TMX':
-                result['tmp_max'] = float(item['fcstValue'])
-            elif item['category'] == 'POP':
-                result['pop'] = max(result['pop'], int(item['fcstValue']))
-            elif item['category'] == 'SKY':
-                result['sky'] = int(item['fcstValue'])
-            elif item['category'] == 'WSD':
-                result['wsd'] = max(result['wsd'], float(item['fcstValue']))
+            time = item['fcstTime']
+            if time not in hourly_map:
+                hourly_map[time] = {"time": f"{time[:2]}:{time[2:]}", "tmp": None, "sky": 1, "pty": 0, "pop": 0}
+            
+            category = item['category']
+            val = item['fcstValue']
+            
+            if category == 'TMN':
+                summary['tmp_min'] = float(val)
+            elif category == 'TMX':
+                summary['tmp_max'] = float(val)
+            elif category == 'POP':
+                summary['pop'] = max(summary['pop'], int(val))
+                hourly_map[time]['pop'] = int(val)
+            elif category == 'SKY':
+                summary['sky'] = int(val)
+                hourly_map[time]['sky'] = int(val)
+            elif category == 'PTY':
+                hourly_map[time]['pty'] = int(val)
+            elif category == 'TMP':
+                hourly_map[time]['tmp'] = float(val)
+            elif category == 'WSD':
+                summary['wsd'] = max(summary['wsd'], float(val))
                 
-    return result
+    # 시간순 정렬
+    sorted_times = sorted(hourly_map.keys())
+    hourly = [hourly_map[t] for t in sorted_times]
+    
+    return {"summary": summary, "hourly": hourly}
 
 def main(date_str=None):
     if not date_str:
@@ -101,6 +123,7 @@ def main(date_str=None):
     
     print(f"Weather data saved to {output_path}")
     return all_weather
+
 
 if __name__ == "__main__":
     import sys

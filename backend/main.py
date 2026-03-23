@@ -18,8 +18,30 @@ app.add_middleware(
 EXECUTION_DIR = os.path.join(os.path.dirname(__file__), "..", "execution")
 TMP_DIR = os.path.join(os.path.dirname(__file__), "..", ".tmp")
 
+@app.get("/hourly/{date_str}")
+async def get_hourly_weather(date_str: str):
+    """
+    해당 날짜의 시간대별 날씨 정보 반환
+    """
+    json_path = os.path.join(TMP_DIR, f"weather_{date_str}.json")
+    python_exe = r"C:\Users\k9746\AppData\Local\Programs\Python\Python314\python.exe"
+
+    if not os.path.exists(json_path):
+        try:
+            subprocess.run([python_exe, os.path.join(EXECUTION_DIR, "fetch_weather.py"), date_str], check=True)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Weather fetch failed: {str(e)}")
+
+    if os.path.exists(json_path):
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data
+    else:
+        raise HTTPException(status_code=404, detail="Weather data not found")
+
 @app.get("/generate/{date_str}")
 async def generate_post(date_str: str):
+
     """
     1. 날씨 데이터 페칭
     2. 게시물 생성
